@@ -1,1 +1,14 @@
-spring.application.name=appointment
+server:
+  port: 8081
+spring:
+  application:
+    name: appointment
+  datasource:
+    url: jdbc:mysql://localhost:3306/patientdb
+    username: root
+    password: Admin@123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+  show-sql: true
