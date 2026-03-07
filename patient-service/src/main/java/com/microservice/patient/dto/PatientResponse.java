@@ -17,6 +17,22 @@ public class PatientResponse {
         private LocalDate dateOfBirth;
         private LocalDate registeredDate;
 
+        public PatientResponse(UUID id,
+                           String firstName,
+                           String lastName,
+                           String email,
+                           String address,
+                           LocalDate dateOfBirth,
+                           LocalDate registeredDate) {
+            this.id = id;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+            this.address = address;
+            this.dateOfBirth = dateOfBirth;
+            this.registeredDate = registeredDate;
+        }
+
     public UUID getId() {
         return id;
     }
@@ -73,20 +89,7 @@ public class PatientResponse {
         this.registeredDate = registeredDate;
     }
 
-    public PatientResponse(UUID id,
-                           String firstName,
-                           String lastName,
-                           String email,
-                           String address,
-                           LocalDate dateOfBirth,
-                           LocalDate registeredDate) {
-            this.id = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.address = address;
-            this.dateOfBirth = dateOfBirth;
-            this.registeredDate = registeredDate;
-        }
+
+
 }
 
