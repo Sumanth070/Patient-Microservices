@@ -16,5 +16,4 @@ public interface PatientClient {
     @GetMapping("/api/v1/patients")
     List<PatientResponse> getAllPatients();
 
-
 }

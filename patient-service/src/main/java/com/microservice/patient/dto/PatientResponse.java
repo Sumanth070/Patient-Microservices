@@ -32,6 +32,9 @@ public class PatientResponse {
             this.dateOfBirth = dateOfBirth;
             this.registeredDate = registeredDate;
         }
+        public PatientResponse(){
+
+        }
 
     public UUID getId() {
         return id;
