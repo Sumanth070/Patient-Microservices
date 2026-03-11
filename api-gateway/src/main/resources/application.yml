@@ -1,0 +1,30 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+
+        - id: patient-service
+          uri: http://patient-service:8080
+          predicates:
+            - Path=/api/v1/patients,/api/v1/patients/**
+
+        - id: appointment-service
+          uri: http://appointment-service:8081
+          predicates:
+            - Path=/api/v1/appointments,/api/v1/appointments/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

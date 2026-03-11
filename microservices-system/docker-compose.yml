@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+
+  patient-db:
+    image: mysql:8
+    container_name: patient-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: patient_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: patient
+      MYSQL_PASSWORD: patient
+    ports:
+      - "3307:3306"
+    volumes:
+      - patient_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  appointment-db:
+    image: mysql:8
+    container_name: appointment-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: appointment_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: appointment
+      MYSQL_PASSWORD: appointment
+    ports:
+      - "3308:3306"
+    volumes:
+      - appointment_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  patient-service:
+    image: patient-service
+    container_name: patient-service
+    depends_on:
+      patient-db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://patient-db:3306/patient_db
+      SPRING_DATASOURCE_USERNAME: patient
+      SPRING_DATASOURCE_PASSWORD: patient
+    restart: always
+
+
+  appointment-service:
+    image: appointment-service
+    container_name: appointment-service
+    depends_on:
+      appointment-db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://appointment-db:3306/appointment_db
+      SPRING_DATASOURCE_USERNAME: appointment
+      SPRING_DATASOURCE_PASSWORD: appointment
+    restart: always
+
+
+  api-gateway:
+    image: api-gateway
+    container_name: api-gateway
+    depends_on:
+      - patient-service
+      - appointment-service
+    ports:
+      - "9090:9090"
+    restart: always
+
+
+volumes:
+  patient_mysql_data:
+  appointment_mysql_data:
