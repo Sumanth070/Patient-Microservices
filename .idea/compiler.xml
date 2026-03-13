@@ -18,6 +18,16 @@
         <module name="appointment" />
         <module name="Microservice" />
       </profile>
+      <profile name="Annotation profile for auth-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="auth-service" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="maven-archiver" target="1.5" />
@@ -28,6 +38,7 @@
       <module name="Microservice" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
       <module name="appointment" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
     </option>
   </component>
 </project>
