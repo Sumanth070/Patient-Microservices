@@ -2,6 +2,7 @@ package com.microservice.patient.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -19,11 +20,31 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     private String firstName;
 
-    @NotNull
+    @NotBlank
     private  String lastName;
+
+    @NotBlank
+    @Email
+    @Column(unique = true)
+    private String email;
+
+    @NotNull
+    private LocalDate dateOfBirth;
+
+    @NotNull
+    @Column(updatable = false)
+    private LocalDate registeredDate;
+
+    @PrePersist
+    public void prePersist(){
+        this.registeredDate = LocalDate.now();
+    }
+
+    @NotNull
+    private String address;
 
     public Patient(UUID id, String firstName, String lastName, String email, String address, LocalDate dateOfBirth, LocalDate registeredDate) {
         this.id = id;
@@ -34,14 +55,6 @@ public class Patient {
         this.dateOfBirth = dateOfBirth;
         this.registeredDate = registeredDate;
     }
-
-    @NotNull
-    @Email
-    @Column(unique = true)
-    private String email;
-
-    @NotNull
-    private String address;
 
     public Patient() {
 
@@ -102,17 +115,5 @@ public class Patient {
     public void setRegisteredDate(@NotNull LocalDate registeredDate) {
         this.registeredDate = registeredDate;
     }
-//@Pattern()
 
-    @NotNull
-    private LocalDate dateOfBirth;
-
-    @NotNull
-    @Column(updatable = false)
-    private LocalDate registeredDate;
-
-    @PrePersist
-    public void prePersist(){
-        this.registeredDate = LocalDate.now();
-    }
 }

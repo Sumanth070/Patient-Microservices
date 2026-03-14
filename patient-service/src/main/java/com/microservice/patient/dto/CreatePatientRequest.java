@@ -1,11 +1,32 @@
 package com.microservice.patient.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 
 
 public class CreatePatientRequest {
+
+    @NotBlank(message = "Name cannot be empty")
+    @Size(min = 2, max = 100)
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces")
+    private String firstName;
+
+    @NotBlank(message = "Name cannot be empty")
+    @Size(min = 2, max = 100)
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces")
+    private String lastName;
+
+    @NotNull
+    private LocalDate dateOfBirth;
+
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
+    private String email;
+
+    @NotBlank(message = "address cannot be empty")
+    private String address;
+
     public CreatePatientRequest(String firstName, String lastName, LocalDate dateOfBirth, String email, String address) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -13,56 +34,47 @@ public class CreatePatientRequest {
         this.email = email;
         this.address = address;
     }
-    public @NotNull String getFirstName() {
+    public CreatePatientRequest(){
+
+    }
+
+    public @NotBlank(message = "Name cannot be empty") @Size(min = 2, max = 100) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces") String getFirstName() {
         return firstName;
     }
 
-    public @NotNull String getLastName() {
+    public void setFirstName(@NotBlank(message = "Name cannot be empty") @Size(min = 2, max = 100) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces") String firstName) {
+        this.firstName = firstName;
+    }
+
+    public @NotBlank(message = "Name cannot be empty") @Size(min = 2, max = 100) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces") String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(@NotBlank(message = "Name cannot be empty") @Size(min = 2, max = 100) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces") String lastName) {
+        this.lastName = lastName;
     }
 
     public @NotNull LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public @NotNull @Email String getEmail() {
-        return email;
-    }
-
-    public @NotNull String getAddress() {
-        return address;
-    }
-
-    @NotNull
-    private String firstName;
-    @NotNull
-    private String lastName;
-    @NotNull
-    private LocalDate dateOfBirth;
-
-    public void setEmail(@NotNull @Email String email) {
-        this.email = email;
-    }
-
-    public void setFirstName(@NotNull String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(@NotNull String lastName) {
-        this.lastName = lastName;
-    }
-
     public void setDateOfBirth(@NotNull LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setAddress(@NotNull String address) {
-        this.address = address;
+    public @NotBlank(message = "Email cannot be empty") @Email(message = "Invalid email format") String getEmail() {
+        return email;
     }
 
-    @NotNull
-    @Email
-    private String email;
-    @NotNull
-    private String address;
+    public void setEmail(@NotBlank(message = "Email cannot be empty") @Email(message = "Invalid email format") String email) {
+        this.email = email;
+    }
+
+    public @NotBlank String getAddress() {
+        return address;
+    }
+
+    public void setAddress(@NotBlank String address) {
+        this.address = address;
+    }
 }

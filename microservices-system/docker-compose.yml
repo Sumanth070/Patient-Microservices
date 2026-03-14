@@ -1,0 +1,129 @@
+services:
+
+  patient-db:
+    image: mysql:8
+    container_name: patient-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: patient_db
+      MYSQL_ROOT_PASSWORD: ${PATIENT_DB_ROOT_PASSWORD}
+      MYSQL_USER: patient
+      MYSQL_PASSWORD: ${PATIENT_DB_PASSWORD}
+    volumes:
+      - patient_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservices-network
+
+
+  appointment-db:
+    image: mysql:8
+    container_name: appointment-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: appointment_db
+      MYSQL_ROOT_PASSWORD: ${APPOINTMENT_DB_ROOT_PASSWORD}
+      MYSQL_USER: appointment
+      MYSQL_PASSWORD: ${APPOINTMENT_DB_PASSWORD}
+    volumes:
+      - appointment_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservices-network
+
+
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    restart: always
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U auth -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservices-network
+
+
+  patient-service:
+    image: patient-service:1.1
+    container_name: patient-service
+    depends_on:
+      patient-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: ${PATIENT_DB_URL}
+      SPRING_DATASOURCE_USERNAME: patient
+      SPRING_DATASOURCE_PASSWORD: ${PATIENT_DB_PASSWORD}
+    restart: always
+    networks:
+      - microservices-network
+
+
+  appointment-service:
+    image: appointment-service:1.1
+    container_name: appointment-service
+    depends_on:
+      appointment-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: ${APPOINTMENT_DB_URL}
+      SPRING_DATASOURCE_USERNAME: appointment
+      SPRING_DATASOURCE_PASSWORD: ${APPOINTMENT_DB_PASSWORD}
+    restart: always
+    networks:
+      - microservices-network
+
+
+  auth-service:
+    image: auth-service:1.1
+    container_name: auth-service
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: ${AUTH_DB_URL}
+      SPRING_DATASOURCE_USERNAME: auth
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
+    restart: always
+    networks:
+      - microservices-network
+
+
+  api-gateway:
+    image: api-gateway:1.1
+    container_name: api-gateway
+    depends_on:
+      - patient-service
+      - appointment-service
+      - auth-service
+    ports:
+      - "9090:9090"
+    restart: always
+    networks:
+      - microservices-network
+
+
+volumes:
+  patient_mysql_data:
+  appointment_mysql_data:
+  auth_postgres_data:
+
+
+networks:
+  microservices-network:
+    driver: bridge
