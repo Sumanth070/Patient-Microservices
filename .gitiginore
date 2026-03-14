@@ -1,0 +1,14 @@
+# Intellj
+.idea/
+*iml
+
+# Maven
+target/
+
+# Environment files
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumb.db
