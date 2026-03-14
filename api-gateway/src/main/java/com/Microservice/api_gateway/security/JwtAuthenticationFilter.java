@@ -38,7 +38,12 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            return exchange.getResponse()
+                    .writeWith(Mono.just(
+                            exchange.getResponse()
+                                    .bufferFactory()
+                                    .wrap("Unauthorized".getBytes())
+                    ));
         }
 
         String token = authHeader.substring(7);
@@ -49,6 +54,13 @@ public class JwtAuthenticationFilter implements GlobalFilter {
             return exchange.getResponse().setComplete();
         }
 
-        return chain.filter(exchange);
+        String username = jwtUtil.extractUsername(token);
+        ServerWebExchange mutatedExchange = exchange.mutate()
+                .request(exchange.getRequest()
+                        .mutate()
+                        .header("X-User-Name", username)
+                        .build())
+                .build();
+        return chain.filter(mutatedExchange);
     }
 }

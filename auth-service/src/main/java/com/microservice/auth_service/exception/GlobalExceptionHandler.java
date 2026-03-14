@@ -36,5 +36,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(AlgorithmNotAvailableException.class)
+    public ResponseEntity<ValidationErrorResponse> handleAlgorithmNotAvailable(AlgorithmNotAvailableException ex){
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage());
+        return new ResponseEntity<>(errorResponse,HttpStatus.CONFLICT);
+    }
+
 
 }

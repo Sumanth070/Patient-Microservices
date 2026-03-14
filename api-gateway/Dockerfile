@@ -1,24 +1,30 @@
-FROM maven:3.9.9-eclipse-temurin-21 AS builder
+# syntax=docker/dockerfile:1.7
+
+# ---------- BUILD STAGE ----------
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /build
 
+# copy pom first for dependency caching
 COPY pom.xml .
-RUN mvn -B dependency:go-offline
 
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B dependency:go-offline
+
+# copy source
 COPY src ./src
-RUN mvn clean package -DskipTests
+
+# build jar
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn clean package -DskipTests
 
 
-FROM eclipse-temurin:21-jre-jammy
+
+# ---------- RUNTIME STAGE ----------
+FROM sumanth/java-runtime:21
 
 WORKDIR /app
 
-RUN useradd -ms /bin/bash springuser
-
 COPY --from=builder /build/target/*.jar app.jar
-
-USER springuser
-
-EXPOSE 9090
 
 ENTRYPOINT ["java","-jar","app.jar"]

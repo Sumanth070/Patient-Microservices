@@ -4,11 +4,17 @@ server:
 spring:
   application:
     name: auth-service
+
   datasource:
     url: jdbc:postgresql://auth-db:5432/auth_db
     username: auth
     password: auth
     driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
 
   jpa:
     hibernate:
@@ -21,10 +27,16 @@ spring:
 
 logging:
   level:
-    org.springFramework.security: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
 
 jwt:
-  #development purpose only
   secret: my-super-secret-key-for-development-only-1234567890
-  expiration: 3600000
-
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
