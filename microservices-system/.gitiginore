@@ -1,2 +1,20 @@
 .iml
-.env
+.env# IntelliJ
+    .idea/
+    *.iml
+    *.iws
+    *.ipr
+
+    # Maven
+    target/
+
+    # Environment files
+    .env
+    .env.*
+
+    # Logs
+    *.log
+
+    # OS files
+    .DS_Store
+    Thumbs.db

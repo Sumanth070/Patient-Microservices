@@ -27,10 +27,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+
+        // Skip authentication for monitoring endpoints
+        return path.startsWith("/actuator");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
 
         // 1️⃣ Get Authorization header
         String authHeader = request.getHeader("Authorization");

@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: notification
+
+  datasource:
+    url: jdbc:postgresql://template-db:5432/template_db
+    username: template
+    password: ${TEMPLATE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none   # IMPORTANT (we'll control schema manually)
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        queue-name: appointment-notification-queue
+        endpoint: http://localhost:4566
+
+server:
+  port: 8084

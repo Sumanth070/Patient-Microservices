@@ -2,13 +2,50 @@ server:
   port: 8081
 spring:
   application:
-    name: appointment
-  datasource:
-    url: jdbc:mysql://localhost:3306/patientdb
-    username: root
-    password: Admin@123
-
+      name: appointment-service
   jpa:
     hibernate:
       ddl-auto: update
-  show-sql: true
+    show-sql: true
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      endpoint: http://localstack:4566
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics,prometheus
+
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+  oltp:
+    tracing:
+      endpoint: http://tempo:4318/v1/traces
+
+patient:
+  service:
+    url: http://patient-service:8080
+
+aws:
+  sns:
+    topic-arn: arn:aws:sns:us-east-1:000000000000:appointment-events
+
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG

@@ -7,30 +7,45 @@ spring:
 
   cloud:
     gateway:
-      routes:
+      server:
+        webflux:
+          routes:
 
-        - id: patient-service
-          uri: http://patient-service:8080
-          predicates:
-            - Path=/api/v1/patients/**
-        - id: appointment-service
-          uri: http://appointment-service:8081
-          predicates:
-            - Path=/api/v1/appointments/**
-        - id: auth-service
-          uri: http://auth-service:8082
-          predicates:
-            - Path=/api/v1/auth/**
+            - id: patient-service
+              uri: http://patient-service:8080
+              predicates:
+                - Path=/api/v1/patients/**
+
+            - id: appointment-service
+              uri: http://appointment-service:8081
+              predicates:
+                - Path=/api/v1/appointments/**
+
+            - id: auth-service
+              uri: http://auth-service:8082
+              predicates:
+                - Path=/api/v1/auth/**
 
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
-      endpoint:
-        gateway:
-          enabled: true
+        include: health,info,gateway,metrics,prometheus
+
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+  oltp:
+    tracing:
+      endpoint: http://tempo:4318/v1/traces
 
 logging:
   level:

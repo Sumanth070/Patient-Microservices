@@ -39,6 +39,24 @@ services:
     networks:
       - microservices-network
 
+  template-db:
+    image: postgres:16
+    container_name: template-db
+    restart: always
+    environment:
+      POSTGRES_DB: template_db
+      POSTGRES_USER: template
+      POSTGRES_PASSWORD: ${TEMPLATE_DB_PASSWORD}
+    volumes:
+      - template_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U template -d template_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservices-network
+
 
   auth-db:
     image: postgres:16
@@ -66,6 +84,7 @@ services:
       patient-db:
         condition: service_healthy
     environment:
+      OTEL_SERVICE_NAME:
       SPRING_DATASOURCE_URL: ${PATIENT_DB_URL}
       SPRING_DATASOURCE_USERNAME: patient
       SPRING_DATASOURCE_PASSWORD: ${PATIENT_DB_PASSWORD}
@@ -81,6 +100,7 @@ services:
       appointment-db:
         condition: service_healthy
     environment:
+      OTEL_SERVICE_NAME:
       SPRING_DATASOURCE_URL: ${APPOINTMENT_DB_URL}
       SPRING_DATASOURCE_USERNAME: appointment
       SPRING_DATASOURCE_PASSWORD: ${APPOINTMENT_DB_PASSWORD}
@@ -96,6 +116,7 @@ services:
       auth-db:
         condition: service_healthy
     environment:
+      OTEL_SERVICE_NAME:
       SPRING_DATASOURCE_URL: ${AUTH_DB_URL}
       SPRING_DATASOURCE_USERNAME: auth
       SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
@@ -111,9 +132,23 @@ services:
       - patient-service
       - appointment-service
       - auth-service
+    environment:
+      OTEL_SERVICE_NAME:
     ports:
       - "9090:9090"
     restart: always
+    networks:
+      - microservices-network
+
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - "3200:3200"
+      - "4318:4318"
     networks:
       - microservices-network
 
@@ -122,6 +157,8 @@ volumes:
   patient_mysql_data:
   appointment_mysql_data:
   auth_postgres_data:
+  template_postgres_data:
+
 
 
 networks:

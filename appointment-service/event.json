@@ -1,0 +1,12 @@
+{
+  "eventId": "123",
+  "eventType": "APPOINTMENT_CREATED",
+  "source": "appointment-service",
+  "timestamp": "2026-03-27T10:00:00",
+  "channel": "BOTH",
+  "data": {
+    "patientName": "John",
+    "doctorName": "Dr. Smith",
+    "time": "10:30 AM"
+  }
+}

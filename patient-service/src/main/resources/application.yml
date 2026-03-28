@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: patient-service
   jpa:
     hibernate:
       ddl-auto: update
@@ -11,15 +13,23 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,gateway,metrics,prometheus
+
   endpoint:
+    gateway:
+      enabled: true
     health:
       show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+  oltp:
+    tracing:
+      endpoint: http://tempo:4318/v1/traces
 
 logging:
   level:
     root: INFO
     com.microservice.patient: DEBUG
-
-  pattern:
-      console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}] %-5level %logger{36} - %msg%n"

@@ -1,4 +1,4 @@
-package com.microservice.patient.config;
+package com.microservice.patient.filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,21 +12,28 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
-public class RequestTracingFilter extends OncePerRequestFilter {
-    private static final String TRACE_ID = "traceid";
+public class CorrelationIdFilter extends OncePerRequestFilter {
+
+    private final static String HEADER_NAME = "X-Correlation-ID";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
-        throws ServletException, IOException{
-        String traceid = UUID.randomUUID().toString();
-        MDC.put(TRACE_ID,traceid);
+            throws ServletException, IOException {
+        String correlationId = request.getHeader(HEADER_NAME);
+
+        if(correlationId==null || correlationId.isEmpty()){
+            correlationId = UUID.randomUUID().toString();
+        }
+        MDC.put("correlationId",correlationId);
+
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request,response);
         }
         finally {
-            MDC.remove(TRACE_ID);
+            MDC.remove("correlationId");
         }
+
     }
 }

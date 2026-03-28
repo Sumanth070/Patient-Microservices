@@ -27,6 +27,7 @@ spring:
 
 logging:
   level:
+    root: INFO
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
 
@@ -34,7 +35,21 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,gateway,metrics,prometheus
+
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+  oltp:
+    tracing:
+      endpoint: http://tempo:4318/v1/traces
 
 jwt:
   secret: my-super-secret-key-for-development-only-1234567890

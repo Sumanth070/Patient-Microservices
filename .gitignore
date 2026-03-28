@@ -1,6 +1,8 @@
-# Intellj
+# IntelliJ
 .idea/
-*iml
+*.iml
+*.iws
+*.ipr
 
 # Maven
 target/
@@ -9,6 +11,9 @@ target/
 .env
 .env.*
 
+# Logs
+*.log
+
 # OS files
 .DS_Store
-Thumb.db
+Thumbs.db
