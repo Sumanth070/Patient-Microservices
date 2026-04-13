@@ -5,12 +5,12 @@ spring:
   datasource:
     url: jdbc:postgresql://template-db:5432/template_db
     username: template
-    password: ${TEMPLATE_DB_PASSWORD}
+    password: template123
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none   # IMPORTANT (we'll control schema manually)
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
@@ -19,6 +19,15 @@ spring:
   sql:
     init:
       mode: never
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    url: jdbc:postgresql://template-db:5432/template_db
+    user: template
+    password: template123
 
   cloud:
     aws:

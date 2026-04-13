@@ -1,17 +1,3 @@
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "Allow-SNS-SendMessage",
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "sqs:SendMessage",
-      "Resource": "arn:aws:sqs:us-east-1:000000000000:appointment-notification-queue",
-      "Condition": {
-        "ArnEquals": {
-          "aws:SourceArn": "arn:aws:sns:us-east-1:000000000000:appointment-topic"
-        }
-      }
-    }
-  ]
+  "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Allow-SNS-SendMessage\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"sqs:SendMessage\",\"Resource\":\"REPLACE_QUEUE_ARN\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"REPLACE_TOPIC_ARN\"}}}]}"
 }

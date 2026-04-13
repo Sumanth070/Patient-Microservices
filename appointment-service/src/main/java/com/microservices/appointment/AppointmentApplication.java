@@ -8,12 +8,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication(
-		exclude = {
-				DataSourceAutoConfiguration.class,
-				HibernateJpaAutoConfiguration.class
-		}
-)
+@SpringBootApplication
 @EnableFeignClients
 @EnableConfigurationProperties(SnsProperties.class)
 public class AppointmentApplication {

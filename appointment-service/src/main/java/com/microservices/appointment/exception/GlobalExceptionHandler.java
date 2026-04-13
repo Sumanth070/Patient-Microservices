@@ -12,55 +12,88 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice(basePackages = "com.microservices.appointment.controller")
 public class GlobalExceptionHandler {
+
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<ValidationErrorResponse> handleValid(MethodArgumentNotValidException ex){
-        log.warn("patient not found exception",ex.getMessage());
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(LocalDateTime.now(),
+    public ResponseEntity<ValidationErrorResponse> handleValid(MethodArgumentNotValidException ex){
+
+        log.warn("Validation failed: {}", ex.getMessage());
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
                 "VALIDATION_ERROR",
                 "Invalid Request Payload",
-                HttpStatus.CONFLICT.value());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-        @ExceptionHandler(PatientNotFoundException.class)
-        public ResponseEntity<ValidationErrorResponse> handlePatientNotFound(PatientNotFoundException ex) {
-            ValidationErrorResponse errorResponse = new ValidationErrorResponse(LocalDateTime.now(),
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    ex.getMessage(),
-                    HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
-        }
-        @ExceptionHandler(AppointmentNotFoundException.class)
-        public ResponseEntity<ValidationErrorResponse> handleAppointmentNotFound(AppointmentNotFoundException ex) {
-            ValidationErrorResponse errorResponse = new ValidationErrorResponse(LocalDateTime.now(),
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    ex.getMessage(),
-                    HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
-        }
+                HttpStatus.BAD_REQUEST.value()
+        );
 
-        @ExceptionHandler(InvalidAppointmentTimeException.class)
-        public String handleInvalidTime(InvalidAppointmentTimeException ex) {
-            return ex.getMessage();
-        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 
-        @ExceptionHandler(PatientServiceUnavailableException.class)
-        public ResponseEntity<ValidationErrorResponse> handlePatientServiceUnavailable(PatientServiceUnavailableException ex) {
-            ValidationErrorResponse errorResponse = new ValidationErrorResponse(LocalDateTime.now(),
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    ex.getMessage(),
-                    HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
-        }
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<ValidationErrorResponse> handlePatientNotFound(PatientNotFoundException ex) {
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
+                "NOT_FOUND",
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AppointmentNotFoundException.class)
+    public ResponseEntity<ValidationErrorResponse> handleAppointmentNotFound(AppointmentNotFoundException ex) {
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
+                "NOT_FOUND",
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidAppointmentTimeException.class)
+    public ResponseEntity<ValidationErrorResponse> handleInvalidTime(InvalidAppointmentTimeException ex) {
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
+                "INVALID_TIME",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(PatientServiceUnavailableException.class)
+    public ResponseEntity<ValidationErrorResponse> handlePatientServiceUnavailable(PatientServiceUnavailableException ex) {
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
+                "SERVICE_UNAVAILABLE",
+                ex.getMessage(),
+                HttpStatus.SERVICE_UNAVAILABLE.value()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ValidationErrorResponse> handleGeneral(Exception ex){
-        log.error("unhandles exception",ex);
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+
+        log.error("Unhandled exception", ex);
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
+                "INTERNAL_ERROR",
                 "Something went wrong",
-                HttpStatus.INTERNAL_SERVER_ERROR.value());
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

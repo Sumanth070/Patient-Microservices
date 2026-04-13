@@ -3,6 +3,7 @@ package com.microservice.notification.processor;
 import com.microservice.notification.channel.ChannelRouter;
 import com.microservice.notification.model.NotificationEvent;
 import com.microservice.notification.service.IdempotencyService;
+import com.microservice.notification.service.TemplateService;
 import com.microservice.notification.template.TemplateEngine;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +13,13 @@ public class NotificationProcessor {
     private final TemplateEngine templateEngine;
     private final ChannelRouter channelRouter;
     private final IdempotencyService idempotencyService;
+    private final TemplateService templateService;
 
-    public NotificationProcessor(TemplateEngine templateEngine, ChannelRouter channelRouter, IdempotencyService idempotencyService) {
+    public NotificationProcessor(TemplateEngine templateEngine, ChannelRouter channelRouter, IdempotencyService idempotencyService, TemplateService templateService) {
         this.templateEngine = templateEngine;
         this.channelRouter = channelRouter;
         this.idempotencyService = idempotencyService;
+        this.templateService = templateService;
     }
 
     public void process(NotificationEvent notificationEvent){
@@ -47,12 +50,11 @@ public class NotificationProcessor {
     }
 
     private void handleAppointmentCreated(NotificationEvent notificationEvent) {
-        String template = "Hello {patientName}, your appointment with {doctorName} is scheduled at {time}";
-
+        String template = templateService.getTemplate(notificationEvent.getEventType());
         String message = templateEngine.generateMessage(template, notificationEvent.getData());
 
+
         System.out.println("Generated Message: " + message);
-        System.out.println("RAW CHANNEL VALUE: [" + notificationEvent.getChannel() + "]");
         channelRouter.route(message, notificationEvent.getChannel());
     }
 }

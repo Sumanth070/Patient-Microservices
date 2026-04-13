@@ -40,13 +40,13 @@ services:
       - microservices-network
 
   template-db:
-    image: postgres:16
+    image: postgres:14
     container_name: template-db
     restart: always
     environment:
       POSTGRES_DB: template_db
       POSTGRES_USER: template
-      POSTGRES_PASSWORD: ${TEMPLATE_DB_PASSWORD}
+      POSTGRES_PASSWORD: template123
     volumes:
       - template_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -73,6 +73,26 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - microservices-network
+
+
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,sns
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - LOCALSTACK_ACKNOWLEDGE_ACCOUNT_REQUIREMENT=1
+    volumes:
+      - ./localstack/init:/etc/localstack/init/ready.d
+      - ./policy.json:/opt/code/policy.json
+      - ./redrive-policy.json:/opt/code/redrive-policy.json
+      - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - microservices-network
 
@@ -140,6 +160,32 @@ services:
     networks:
       - microservices-network
 
+  notification-service:
+    image: notification-service:1.1
+    container_name: notification-service
+    depends_on:
+      template-db:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://template-db:5432/template_db
+      SPRING_DATASOURCE_USERNAME: template
+      SPRING_DATASOURCE_PASSWORD: template123
+
+      SPRING_CLOUD_AWS_REGION_STATIC: us-east-1
+      SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY: test
+      SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY: test
+
+      SPRING_CLOUD_AWS_SQS_ENDPOINT: http://localstack:4566
+      SPRING_CLOUD_AWS_SNS_ENDPOINT: http://localstack:4566
+
+    ports:
+      - "8084:8084"
+    restart: always
+    networks:
+      - microservices-network
+
   tempo:
     image: grafana/tempo:2.4.1
     container_name: tempo
@@ -158,7 +204,6 @@ volumes:
   appointment_mysql_data:
   auth_postgres_data:
   template_postgres_data:
-
 
 
 networks:

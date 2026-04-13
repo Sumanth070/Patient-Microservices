@@ -37,9 +37,6 @@ public class AppointmentResponse {
         this.scheduledAt = scheduledAt;
         this.createdAt = createdAt;
     }
-    public AppointmentResponse(String patientName) {
-        this.patientName = patientName;
-    }
 
 
     public AppointmentResponse() {

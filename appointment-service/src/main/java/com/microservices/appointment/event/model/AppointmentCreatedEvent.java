@@ -74,18 +74,26 @@ public class AppointmentCreatedEvent {
     public static class DataPayload
     {
         private String appointmentId;
+        private String patientName;
         private String doctorName;
-        private String patientId;
         private LocalDateTime scheduledAt;
 
         public DataPayload() {
         }
 
-        public DataPayload(String appointmentId, String doctorName, String patientId, LocalDateTime scheduledAt) {
+        public DataPayload(String appointmentId, String patientName, String doctorName, LocalDateTime scheduledAt) {
             this.appointmentId = appointmentId;
+            this.patientName = patientName;
             this.doctorName = doctorName;
-            this.patientId = patientId;
             this.scheduledAt = scheduledAt;
+        }
+
+        public String getPatientName() {
+            return patientName;
+        }
+
+        public void setPatientName(String patientName) {
+            this.patientName = patientName;
         }
 
         public String getAppointmentId() {
@@ -102,14 +110,6 @@ public class AppointmentCreatedEvent {
 
         public void setDoctorName(String doctorName) {
             this.doctorName = doctorName;
-        }
-
-        public String getPatientId() {
-            return patientId;
-        }
-
-        public void setPatientId(String patientId) {
-            this.patientId = patientId;
         }
 
         public LocalDateTime getScheduledAt() {

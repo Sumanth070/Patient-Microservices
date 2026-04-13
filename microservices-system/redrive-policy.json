@@ -1,4 +1,3 @@
-﻿{
-  "deadLetterTargetArn": "arn:aws:sqs:us-east-1:000000000000:appointment-notification-dlq",
-  "maxReceiveCount": "3"
+{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"REPLACE_DLQ_ARN\",\"maxReceiveCount\":\"3\"}"
 }

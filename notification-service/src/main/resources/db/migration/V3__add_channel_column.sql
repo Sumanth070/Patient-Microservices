@@ -1,0 +1,6 @@
+ALTER TABLE template
+ADD COLUMN channel VARCHAR(50) DEFAULT 'EMAIL';
+
+UPDATE template
+SET channel = 'BOTH'
+WHERE template_key = 'APPOINTMENT_CREATED';

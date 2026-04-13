@@ -1,9 +1,9 @@
 {
-  "eventId": "123",
+  "eventId": "143",
   "eventType": "APPOINTMENT_CREATED",
   "source": "appointment-service",
   "timestamp": "2026-03-27T10:00:00",
-  "channel": "BOTH",
+  "channel": "EMAIL",
   "data": {
     "patientName": "John",
     "doctorName": "Dr. Smith",

@@ -10,7 +10,10 @@ spring:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
 
-# Feign URL will be replaced by WireMock
+  cloud:
+    aws:
+      enabled: false   # VERY IMPORTANT
+
 patient:
   service:
     url: http://localhost:${wiremock.server.port}

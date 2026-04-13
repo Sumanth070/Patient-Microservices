@@ -42,7 +42,7 @@ patient:
 
 aws:
   sns:
-    topic-arn: arn:aws:sns:us-east-1:000000000000:appointment-events
+    topic-arn: arn:aws:sns:us-east-1:000000000000:appointment-topic
 
 
 logging:

@@ -1,7 +1,6 @@
 package com.microservice.notification.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import software.amazon.awssdk.services.sqs.endpoints.internal.Value;
 
 import java.util.Map;
 
@@ -17,19 +16,19 @@ public class NotificationEvent {
     private String timestamp;
     @JsonProperty("channel")
     private String channel;
-
-    private Map<String,Object> data;
+    @JsonProperty("payload")
+    private Map<String,Object> payload;
 
     public NotificationEvent() {
     }
 
-    public NotificationEvent(String eventId, String eventType, String source, String timestamp, String channel, Map<String, Object> data) {
+    public NotificationEvent(String eventId, String eventType, String source, String timestamp, String channel, Map<String, Object> payload) {
         this.eventId = eventId;
         this.eventType = eventType;
         this.source = source;
         this.timestamp = timestamp;
         this.channel = channel;
-        this.data = data;
+        this.payload = payload;
     }
 
     public String getEventId() {
@@ -73,10 +72,10 @@ public class NotificationEvent {
     }
 
     public Map<String, Object> getData() {
-        return data;
+        return payload;
     }
 
-    public void setData(Map<String, Object> data) {
-        this.data = data;
+    public void setData(Map<String, Object> payload) {
+        this.payload = payload;
     }
 }

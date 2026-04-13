@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservices.appointment.client.PatientClient;
 import com.microservices.appointment.dto.CreateAppointmentRequest;
 import com.microservices.appointment.dto.PatientResponse;
+import com.microservices.appointment.event.publisher.AppointmentEventPublisher;
 import com.microservices.appointment.mapper.AppointmentMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentIntegrationTest {
+
+    @MockBean
+    private AppointmentEventPublisher eventPublisher; // ✅ FIX
 
     @Autowired
     private MockMvc mockMvc;
