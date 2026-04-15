@@ -11,16 +11,29 @@ phases:
 
   build:
     commands:
-      - echo Build started on `date`
+      - echo Build started
 
-      # Build image (Dockerfile handles Maven build internally)
+      # Patient Service
       - docker build -t healthcare/patient-service ./patient-service
-
-      # Tag for ECR
       - docker tag healthcare/patient-service:latest $ECR_URL/healthcare/patient-service:latest
+
+      # Appointment Service
+      - docker build -t healthcare/appointment-service ./appointment-service
+      - docker tag healthcare/appointment-service:latest $ECR_URL/healthcare/appointment-service:latest
+
+      # Auth Service
+      - docker build -t healthcare/auth-service ./auth-service
+      - docker tag healthcare/auth-service:latest $ECR_URL/healthcare/auth-service:latest
+
+      # Notification Service
+      - docker build -t healthcare/notification-service ./notification-service
+      - docker tag healthcare/notification-service:latest $ECR_URL/healthcare/notification-service:latest
 
   post_build:
     commands:
-      - echo Pushing image...
+      - echo Pushing images...
+
       - docker push $ECR_URL/healthcare/patient-service:latest
-      - echo Build completed on `date`
+      - docker push $ECR_URL/healthcare/appointment-service:latest
+      - docker push $ECR_URL/healthcare/auth-service:latest
+      - docker push $ECR_URL/healthcare/notification-service:latest
