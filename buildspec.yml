@@ -29,6 +29,10 @@ phases:
       - docker build -t healthcare/notification-service ./notification-service
       - docker tag healthcare/notification-service:latest $ECR_URL/healthcare/notification-service:latest
 
+      # API - Gateway
+      - docker build -t healthcare/api-gateway ./api-gateway
+      - docker tag healthcare/api-gateway:latest $ECR_URL/healthcare/api-gateway:latest
+
   post_build:
     commands:
       - echo Pushing images...
@@ -37,3 +41,4 @@ phases:
       - docker push $ECR_URL/healthcare/appointment-service:latest
       - docker push $ECR_URL/healthcare/auth-service:latest
       - docker push $ECR_URL/healthcare/notification-service:latest
+      - docker push $ECR_URL/healthcare/api-gateway:latest
