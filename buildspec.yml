@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - REGION=ap-south-2
+      - ECR_URL=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URL
+
+  build:
+    commands:
+      - echo Build started on `date`
+
+      # Build image (Dockerfile handles Maven build internally)
+      - docker build -t healthcare/patient-service ./patient-service
+
+      # Tag for ECR
+      - docker tag healthcare/patient-service:latest $ECR_URL/healthcare/patient-service:latest
+
+  post_build:
+    commands:
+      - echo Pushing image...
+      - docker push $ECR_URL/healthcare/patient-service:latest
+      - echo Build completed on `date`
