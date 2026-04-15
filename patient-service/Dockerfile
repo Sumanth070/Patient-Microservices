@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 
 
 # ---------- RUNTIME STAGE ----------
-FROM sumanth/java-runtime:21
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
