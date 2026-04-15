@@ -1,0 +1,107 @@
+version: "3.8"
+
+services:
+
+  patient-db:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: patient_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: patient
+      MYSQL_PASSWORD: patient
+    volumes:
+      - patient_mysql_data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+  appointment-db:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: appointment_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: appointment
+      MYSQL_PASSWORD: appointment
+    volumes:
+      - appointment_mysql_data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+  auth-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: auth
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+  template-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: template_db
+      POSTGRES_USER: template
+      POSTGRES_PASSWORD: template123
+    volumes:
+      - template_postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+
+  patient-service:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/healthcare/patient-service:latest
+    depends_on:
+      - patient-db
+    ports:
+      - "8081:8080"
+    networks:
+      - microservices-network
+
+  appointment-service:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/healthcare/appointment-service:latest
+    depends_on:
+      - appointment-db
+    ports:
+      - "8082:8080"
+    networks:
+      - microservices-network
+
+  auth-service:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/healthcare/auth-service:latest
+    depends_on:
+      - auth-db
+    ports:
+      - "8083:8080"
+    networks:
+      - microservices-network
+
+  notification-service:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/healthcare/notification-service:latest
+    depends_on:
+      - template-db
+    ports:
+      - "8084:8080"
+    networks:
+      - microservices-network
+
+  api-gateway:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/healthcare/api-gateway:latest
+    depends_on:
+      - patient-service
+      - appointment-service
+      - auth-service
+    ports:
+      - "9090:9090"
+    networks:
+      - microservices-network
+
+volumes:
+  patient_mysql_data:
+  appointment_mysql_data:
+  auth_postgres_data:
+  template_postgres_data:
+
+networks:
+  microservices-network:
+    driver: bridge
